@@ -36,15 +36,24 @@
 			try {
 				const res = await fetch('/api/documents/upload', {
 					method: 'POST',
+					headers: {
+						'Accept': 'application/json'
+					},
 					body: formData
 				});
 				
 				if (!res.ok) {
-					const data = await res.json();
-					error = data.error || 'Upload failed';
+					let errorMessage = 'Upload failed';
+					try {
+						const data = await res.json();
+						errorMessage = data.error || `Server returned ${res.status}: ${res.statusText}`;
+					} catch (parseErr) {
+						errorMessage = `Server error ${res.status}: ${res.statusText}`;
+					}
+					error = errorMessage;
 				}
 			} catch (e: any) {
-				error = e.message || 'Upload failed';
+				error = e.message || 'Network error occurred';
 			}
 		}
 		

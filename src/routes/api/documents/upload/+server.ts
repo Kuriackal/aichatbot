@@ -28,7 +28,7 @@ export const POST: RequestHandler = async (event) => {
 
 		if (uploadError) {
 			console.error('Upload error', uploadError);
-			return json({ error: 'Failed to upload file' }, { status: 500 });
+			return json({ error: `Failed to upload file: ${uploadError.message}` }, { status: 500 });
 		}
 
 
@@ -44,7 +44,7 @@ export const POST: RequestHandler = async (event) => {
 			.single();
 
 		if (docError || !doc) {
-			return json({ error: 'Failed to create document record' }, { status: 500 });
+			return json({ error: `Failed to create document record: ${docError?.message || 'No doc returned'}` }, { status: 500 });
 		}
 
 
@@ -97,7 +97,7 @@ export const POST: RequestHandler = async (event) => {
 				.update({ status: 'failed' })
 				.eq('id', doc.id);
 				
-			return json({ error: 'Failed to process document content' }, { status: 500 });
+			return json({ error: `Failed to process document content: ${processingError instanceof Error ? processingError.message : String(processingError)}` }, { status: 500 });
 		}
 
 	} catch (e: any) {
