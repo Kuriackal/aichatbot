@@ -19,7 +19,7 @@ export const POST: RequestHandler = async (event) => {
 			return json({ error: 'Last message must be from user' }, { status: 400 });
 		}
 
-		// Ensure conversation exists
+
 		let cid = conversationId;
 		if (!cid) {
 			const { data: conv, error: convError } = await supabaseAdmin

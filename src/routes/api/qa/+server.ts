@@ -14,11 +14,11 @@ export const POST: RequestHandler = async (event) => {
 			return json({ error: 'Question and answer are required' }, { status: 400 });
 		}
 
-		// Generate embedding for the combined text
+
 		const contentToEmbed = `Question: ${question}\nAnswer: ${answer}`;
 		const embedding = await generateEmbedding(contentToEmbed);
 
-		// Insert into qa_pairs
+
 		const { data: qaPair, error } = await supabaseAdmin
 			.from('qa_pairs')
 			.insert({

@@ -17,7 +17,7 @@ export const POST: RequestHandler = async (event) => {
 			return json({ error: 'No file provided' }, { status: 400 });
 		}
 
-		// 1. Upload raw file to Supabase Storage
+
 		const fileExt = file.name.split('.').pop();
 		const fileName = `${crypto.randomUUID()}.${fileExt}`;
 		const filePath = `uploads/${fileName}`;
@@ -31,7 +31,7 @@ export const POST: RequestHandler = async (event) => {
 			return json({ error: 'Failed to upload file' }, { status: 500 });
 		}
 
-		// 2. Insert document record (status: processing)
+
 		const { data: doc, error: docError } = await supabaseAdmin
 			.from('documents')
 			.insert({
@@ -47,12 +47,12 @@ export const POST: RequestHandler = async (event) => {
 			return json({ error: 'Failed to create document record' }, { status: 500 });
 		}
 
-		// 3. Process text and chunk it
+
 		try {
 			const text = await extractText(file);
 			const chunks = chunkText(text);
 
-			// 4. Generate embeddings and insert chunks
+
 			for (const chunk of chunks) {
 				const embedding = await generateEmbedding(chunk.content);
 				
@@ -64,7 +64,7 @@ export const POST: RequestHandler = async (event) => {
 				});
 			}
 
-			// 4.5 Auto-Generate Q&A pairs
+
 			try {
 				const autoQAs = await generateAutoQAPairs(text);
 				for (const qa of autoQAs) {
@@ -82,7 +82,7 @@ export const POST: RequestHandler = async (event) => {
 				console.error("Auto QA generation failed", qaErr);
 			}
 
-			// 5. Update document status to ready
+
 			await supabaseAdmin
 				.from('documents')
 				.update({ status: 'ready', chunk_count: chunks.length })
@@ -91,7 +91,7 @@ export const POST: RequestHandler = async (event) => {
 			return json({ success: true, document: doc });
 		} catch (processingError) {
 			console.error('Processing error', processingError);
-			// Mark as failed
+
 			await supabaseAdmin
 				.from('documents')
 				.update({ status: 'failed' })

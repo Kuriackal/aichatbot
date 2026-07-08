@@ -24,7 +24,7 @@ export const actions: Actions = {
 		});
 
 		if (error) {
-			// Archive thematic error messages
+
 			let message = 'This card could not be retrieved. Check your credentials.';
 			if (error.message.includes('Invalid login credentials')) {
 				message = 'No matching record found in the archives for these credentials.';

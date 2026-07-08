@@ -8,16 +8,16 @@
 	let uploading = $state(false);
 	let error = $state<string | null>(null);
 
-	// Tabs: 'files' | 'qa'
+
 	let activeTab = $state<'files' | 'qa'>('files');
 
-	// QA State
+
 	let newQuestion = $state('');
 	let newAnswer = $state('');
 	let savingQa = $state(false);
 	let qaError = $state<string | null>(null);
 
-	// Edit QA state
+
 	let editingQaId = $state<string | null>(null);
 	let editQuestion = $state('');
 	let editAnswer = $state('');
