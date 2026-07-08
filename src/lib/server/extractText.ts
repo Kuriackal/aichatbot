@@ -1,6 +1,6 @@
 import { PDFParse } from 'pdf-parse';
 import mammoth from 'mammoth';
-import { Buffer } from 'buffer';
+import { Buffer } from 'node:buffer';
 
 
 export async function extractText(file: File): Promise<string> {
