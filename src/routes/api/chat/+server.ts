@@ -32,7 +32,28 @@ export const POST: RequestHandler = async (event) => {
 			cid = conv.id;
 		}
 
-		const chunks = await retrieveChunks(userMessage.content);
+		// --- QUERY EXPANSION ---
+		// Rewrite short queries and resolve follow-up pronouns using the chat history
+		let searchQuery = userMessage.content;
+		try {
+			const queryExpansionRes = await openai.chat.completions.create({
+				model: CHAT_MODEL,
+				messages: [
+					{ 
+						role: 'system', 
+						content: 'You are a search query optimizer. Given the user\'s latest message and the conversation history, rewrite the user\'s message into a rich, descriptive search query to find relevant information in a vector database. Resolve any pronouns (e.g., "it", "they") to their actual subjects. Add relevant synonyms or intent keywords. Do not answer the question. JUST output the expanded search query text and nothing else.' 
+					},
+					...messages.map((m: any) => ({ role: m.role, content: m.content }))
+				],
+				temperature: 0.3
+			});
+			searchQuery = queryExpansionRes.choices[0]?.message?.content?.trim() || userMessage.content;
+
+		} catch (err) {
+			console.error("Query expansion failed, falling back to original query", err);
+		}
+
+		const chunks = await retrieveChunks(searchQuery);
 		const systemPrompt = buildSystemPrompt(chunks);
 
 		const openaiMessages = [
