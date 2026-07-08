@@ -2,7 +2,6 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { requireAdmin } from '$lib/server/auth';
 import { supabaseAdmin } from '$lib/server/supabase';
-import { extractText } from '$lib/server/extractText';
 import { chunkText } from '$lib/server/chunking';
 import { generateEmbedding, generateAutoQAPairs } from '$lib/server/openai';
 
@@ -16,7 +15,9 @@ export const POST: RequestHandler = async (event) => {
 		console.log('Extracting form data...');
 		const formData = await event.request.formData();
 		const file = formData.get('file') as File;
+		const extractedText = formData.get('text') as string;
 		console.log('File extracted:', file ? file.name : 'No file');
+		console.log('Pre-extracted text received:', extractedText ? 'Yes' : 'No');
 		
 		if (!file) {
 			return json({ error: 'No file provided' }, { status: 400 });
@@ -58,9 +59,9 @@ export const POST: RequestHandler = async (event) => {
 
 
 		try {
-			console.log('Extracting text from file...');
-			const text = await extractText(file);
-			console.log(`Extracted text length: ${text.length}`);
+			console.log('Using pre-extracted text...');
+			const text = extractedText || '';
+			console.log(`Text length: ${text.length}`);
 
 			console.log('Chunking text...');
 			const chunks = chunkText(text);

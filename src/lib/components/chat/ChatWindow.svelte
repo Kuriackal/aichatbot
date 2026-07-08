@@ -104,10 +104,12 @@
 		<div bind:this={chatContainer} class="flex-1 overflow-y-auto p-4 space-y-6 pb-32">
 			<div class="max-w-3xl mx-auto space-y-6">
 				{#each messages as msg}
-					<MessageBubble message={msg} />
+					{#if msg.content || msg.role === 'user'}
+						<MessageBubble message={msg} />
+					{/if}
 				{/each}
-				{#if loading && messages[messages.length-1].role === 'user'}
-					<div class="flex items-center gap-3 text-gray-500 max-w-3xl mx-auto">
+				{#if loading && (messages[messages.length-1].role === 'user' || (messages[messages.length-1].role === 'assistant' && !messages[messages.length-1].content))}
+					<div class="flex items-center gap-3 text-gray-500 max-w-3xl mx-auto px-4">
 						<Loader2 class="w-5 h-5 animate-spin" />
 						<span class="text-sm">Thinking...</span>
 					</div>

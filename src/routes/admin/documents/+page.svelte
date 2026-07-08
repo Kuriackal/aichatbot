@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
 	import { Trash2, UploadCloud, File, CheckCircle2, XCircle, Loader2, Edit, Save, Plus } from 'lucide-svelte';
+	import { extractTextClient } from '$lib/extractTextClient';
 
 	let { data } = $props();
 	
@@ -30,10 +31,14 @@
 		error = null;
 		
 		for (let i = 0; i < files.length; i++) {
+			const file = files[i];
 			const formData = new FormData();
-			formData.append('file', files[i]);
+			formData.append('file', file);
 			
 			try {
+				const text = await extractTextClient(file);
+				formData.append('text', text);
+				
 				const res = await fetch('/api/documents/upload', {
 					method: 'POST',
 					headers: {
@@ -198,9 +203,9 @@
 			</div>
 
 			{#if uploading}
-				<div class="mt-4 flex items-center justify-center text-sm text-gray-600">
-					<Loader2 class="animate-spin mr-2 h-4 w-4" />
-					Processing documents...
+				<div class="mt-4 flex items-center justify-center text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-100">
+					<Loader2 class="animate-spin mr-3 h-5 w-5 text-primary" />
+					<span>Uploading document and AI is generating Q&A pairs (this may take a minute)...</span>
 				</div>
 			{/if}
 		</div>
