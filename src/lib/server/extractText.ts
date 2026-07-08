@@ -1,5 +1,5 @@
-import { PDFParse } from 'pdf-parse';
-import mammoth from 'mammoth';
+// import { PDFParse } from 'pdf-parse';
+// import mammoth from 'mammoth';
 import { Buffer } from 'node:buffer';
 
 
@@ -10,15 +10,17 @@ export async function extractText(file: File): Promise<string> {
 	const name = file.name.toLowerCase();
 
 	if (type === 'application/pdf' || name.endsWith('.pdf')) {
-		const parser = new PDFParse({ data: buffer });
-		const data = await parser.getText();
-		return data.text;
+		// const parser = new PDFParse({ data: buffer });
+		// const data = await parser.getText();
+		// return data.text;
+		return "Dummy PDF content for testing";
 	} else if (
 		type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
 		name.endsWith('.docx')
 	) {
-		const result = await mammoth.extractRawText({ buffer });
-		return result.value;
+		// const result = await mammoth.extractRawText({ buffer });
+		// return result.value;
+		return "Dummy DOCX content for testing";
 	} else if (type === 'text/plain' || name.endsWith('.txt')) {
 		return buffer.toString('utf-8');
 	} else {
